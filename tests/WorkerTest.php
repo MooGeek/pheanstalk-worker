@@ -1,7 +1,9 @@
 <?php
 
-namespace Pheanstalk;
+namespace PheanstalkWorker;
 
+use Pheanstalk\Pheanstalk;
+use Pheanstalk\Job;
 use PHPUnit\Framework\TestCase;
 
 final class WorkerTest extends TestCase
@@ -12,7 +14,7 @@ final class WorkerTest extends TestCase
     /**
      * @throws Exception\WorkerException
      */
-    public function testWorkerRuns()
+    public function testWorkerRuns(): void
     {
         $testWorkerRuns = $this;
         $tube = 'worker_tube_'.rand(53, 504);
@@ -39,7 +41,7 @@ final class WorkerTest extends TestCase
      *
      * @throws Exception\WorkerException
      */
-    public function testWorkerNoJobs()
+    public function testWorkerNoJobs(): void
     {
         $testWorkerRuns = $this;
         $tube = 'worker_tube_'.rand(53, 504);

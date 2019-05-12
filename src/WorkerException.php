@@ -1,6 +1,6 @@
 <?php
 
-namespace Pheanstalk\Exception;
+namespace PheanstalkWorker\Exception;
 
 /**
  * An exception relating to the worker implementation.

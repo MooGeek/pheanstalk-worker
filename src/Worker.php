@@ -1,6 +1,6 @@
 <?php
 
-namespace Pheanstalk;
+namespace PheanstalkWorker;
 
 /*
  * Default implementation of a php worker.
@@ -11,6 +11,8 @@ namespace Pheanstalk;
  * @licence http://www.opensource.org/licenses/mit-license.php
  */
 
+use Pheanstalk\Pheanstalk;
+use Pheanstalk\Job;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -21,7 +23,8 @@ class Worker
     private $_logger = null;
 
     /**
-     * @param Pheanstalk $pheanstalk
+     * @param Pheanstalk      $pheanstalk
+     * @param LoggerInterface $logger
      */
     public function __construct(Pheanstalk $pheanstalk, LoggerInterface $logger = null)
     {
@@ -32,21 +35,23 @@ class Worker
         } else {
             $this->_logger = new NullLogger();
         }
+
         $this->_logger->notice('Worker initiated.');
     }
 
     /**
-     * @param $tube
-     * @param callable $callable
-     * @param string   $onError
+     * @param string   $tube
+     * @param callable $callable will be executed upon receiving appropriate a job
+     * @param string   $retryOn  name of an exception class which will trigger job retry instead of burying it
      */
-    public function register($tube, callable $callable, $retryOn = ''): void
+    public function register(string $tube, callable $callable, string $retryOn = ''): void
     {
         $this->_callbacks[$tube] = array(
             'callable' => $callable,
             'retryOn' => $retryOn,
         );
         $this->_pheanstalk->watch($tube);
+
         $this->_logger->notice('Callback registered', array('tube' => $tube));
     }
 
@@ -87,15 +92,16 @@ class Worker
                 $startMem = memory_get_usage();
                 $this->_callbacks[$tube]['callable']($job);
                 $this->_pheanstalk->delete($job);
+
                 $this->_logger->notice('Job '.$job->getId().' complete. Time taken: '.(microtime(true) - $startTime).' Memory Used: '.(memory_get_usage() - $startMem));
             } catch (Exception $e) {
-                if (!empty($this->_callbacks[$tube]['retryOn']) && is_a($e,
-                        $this->_callbacks['retryOn'])
-                    ) {
+                if (!empty($this->_callbacks[$tube]['retryOn']) && is_a($e, $this->_callbacks['retryOn'])) {
                     $this->_logger->warning('Job '.$job->getId().' failed. Releasing Job and retrying again.', array('trace' => $e->getTraceAsString()));
+
                     $this->_pheanstalk->release($job);
                 } else {
                     $this->_logger->error('Job '.$job->getId().' failed. Burying job.', array('trace' => $e->getTraceAsString()));
+
                     $this->_pheanstalk->bury($job);
                 }
             }
@@ -103,15 +109,15 @@ class Worker
             // if we receive a job from the "default" queue and there is no registered function for the default queue then ignore it and move on.
             $this->_pheanstalk->release($job);
             $this->_pheanstalk->ignore('default');
+
             $this->_logger->warning('Job reserved from default tube. Releasing job and ignoring default tube.', $statJob);
         } else {
             // we know nothing about this job and what we should do with it. We should not have received this so something is really not right.
             $this->_pheanstalk->release($job);
+
             $this->_logger->error("Job fetched for unknown tube '$tube'", array('id' => $job->getId()));
-            throw new Exception\WorkerException(sprintf(
-                    'Job fetched for unknown tube "%s"',
-                    $tube
-                ));
+
+            throw new Exception\WorkerException(sprintf('Job fetched for unknown tube "%s"', $tube));
         }
     }
 }
