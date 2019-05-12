@@ -1,9 +1,9 @@
 {
-  "name": "heydon/phpeanstalk-worker",
+  "name": "moogeek/pheanstalk-worker",
   "type": "library",
-  "description": "Phpworker for the Phpeanstalk library",
+  "description": "Worker for the Pheanstalk library",
   "keywords": ["beanstalk"],
-  "homepage": "https://github.com/gheydon/pheanstalk-worker",
+  "homepage": "https://github.com/moogeek/pheanstalk-worker",
   "license": "MIT",
   "authors": [
     {
@@ -11,24 +11,24 @@
       "email": "gordon@heydon.com.au",
       "homepage": "http://heydon.com.au",
       "role": "Developer"
+    },
+    {
+      "name": "Stanislav Zakratskiy",
+      "email": "szakratsky@gmail.com",
+      "role": "Developer"
     }
   ],
   "require": {
-    "php": ">=5.4.0",
-    "pda/pheanstalk": "~3.0",
+    "php": ">=7.1.0",
+    "pda/pheanstalk": "~4.0",
     "psr/log": "~1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.0"
+    "phpunit/phpunit": "~8.0"
   },
   "autoload": {
     "psr-4": {
       "Pheanstalk\\": "src/"
-    }
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "1.0-dev"
     }
   }
 }
