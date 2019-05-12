@@ -1,9 +1,7 @@
 Pheanstalk
 ==========
 
-[![Build Status](https://travis-ci.org/gheydon/pheanstalk-worker.png?branch=master)](https://travis-ci.org/gheydon/pheanstalk-worker)
-
-Pheanstalk is a pure PHP 5.4+ client for the [beanstalkd workqueue][1].  It has
+Pheanstalk is a pure PHP 7.1+ client for the [beanstalkd workqueue][1].  It has
 been actively developed, and used in production by many, since late 2008.
 
 Created by [Gordon Heydon][2], Pheanstalk Worker has ben created as a best of
@@ -11,12 +9,12 @@ bread worker. Started in Jan 2015 as stable implementation of a worker for
 [Pheanstalk][3] to either to be used as a proper example of how a worker should
 be created or as an implementation that can be used in a production system.
 
-Pheanstalk Worker 1.0 introduces PHP namespaces, PSR-1 and PSR-2 coding standards,
-and PSR-4 autoloader standard.
+**This fork is just a version bump of every dependency plus mild refactoring
+and refurbishing, at least for now.**
 
-  [1]: http://xph.us/software/beanstalkd/
+  [1]: https://beanstalkd.github.io/
   [2]: http://heydon.com.au/
-  [3]: https://github.com/pda/pheanstalk
+  [3]: https://github.com/pheanstalk/pheanstalk
 
 
 Installation with Composer
@@ -25,7 +23,7 @@ Installation with Composer
 Install pheanstalk-worker as a dependency with composer:
 
 ```bash
-composer require heydon/pheanstalk-worker
+composer require moogeek/pheanstalk-worker
 ```
 
 
@@ -51,25 +49,27 @@ To create a worker use the following example.
 <?php
 
 // Again hopefully you are using Composers autoloading
+use Pheanstalk\Pheanstalk;
+use Pheanstalk\Job;
+use PheanstalkWorker\Worker;
 
-use Pheanstalk\Worker;
-
-$worker = new Worker('127.0.0.1');
+$pheanstalk = Pheanstalk::create('127.0.0.1');
+$worker = new Worker($pheanstalk);
 
 // ----------------------------------------
 // register functions to be called for each queue
 
-$worker->register('testtube', function ($job) {
+$worker->register('testtube', function (Job $job) {
     echo $job->getData();
 });
 
 // You can register multiple tubes to be watched by a single worker
-$worker->register('testtube2', function ($job) {
+$worker->register('testtube2', function (Job $job) {
     echo $job->getData();
 });
 
 // If you Exception class is specified the job will be released instead of buried.
-$worker->register('testtube3', function ($job) {
+$worker->register('testtube3', function (Job $job) {
     echo $job->getData();
 }, 'SomeException');
 
@@ -112,6 +112,6 @@ OK (83 tests, 378 assertions)
 Licence
 -------
 
-© Gordon Heydon
+© Gordon Heydon, Stanislav Zakratskiy
 
 Released under the [The MIT License](http://www.opensource.org/licenses/mit-license.php)
