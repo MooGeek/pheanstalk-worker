@@ -1,4 +1,4 @@
-Pheanstalk
+pheanstalk-worker
 ==========
 
 Pheanstalk is a pure PHP 7.1+ client for the [beanstalkd workqueue][1].  It has
@@ -51,7 +51,7 @@ To create a worker use the following example.
 // Again hopefully you are using Composers autoloading
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\Job;
-use PheanstalkWorker\Worker;
+use Moogeek\PheanstalkWorker\Worker;
 
 $pheanstalk = Pheanstalk::create('127.0.0.1');
 $worker = new Worker($pheanstalk);
