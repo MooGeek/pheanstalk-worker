@@ -1,6 +1,6 @@
 <?php
 
-namespace PheanstalkWorker\Exception;
+namespace Moogeek\PheanstalkWorker;
 
 /**
  * An exception relating to the worker implementation.

@@ -1,6 +1,6 @@
 <?php
 
-namespace PheanstalkWorker;
+namespace Moogeek\PheanstalkWorker;
 
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\Job;

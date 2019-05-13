@@ -1,6 +1,6 @@
 <?php
 
-namespace PheanstalkWorker;
+namespace Moogeek\PheanstalkWorker;
 
 /*
  * Default implementation of a php worker.
